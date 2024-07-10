@@ -19,7 +19,7 @@ public class GenerateJWTToken
 			.WithAlgorithm(new HMACSHA256Algorithm())
 			.WithSecret(_configuration["Jwt"])
 			.AddClaim("token", token)
-			.Encode(token);
+			.Encode();
 		
 		return jwtToken;
 	}
