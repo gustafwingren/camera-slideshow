@@ -52,7 +52,7 @@ public class ValidateJWT
 		}
 		catch (Exception exception)
 		{
-			logger.LogError(exception, "Failed to decode JWT token.");
+			logger.LogError(exception, "Failed to decode JWT token., {token}", authorizationHeader);
 			IsValid = false;
 
 			return;
