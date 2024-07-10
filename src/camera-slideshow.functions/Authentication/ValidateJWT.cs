@@ -44,7 +44,7 @@ public class ValidateJWT
 			}
 
 			// Validate the token and decode the claims.
-			claims = new JwtBuilder()
+			claims = JwtBuilder.Create()
 				.WithAlgorithm(new HMACSHA256Algorithm())
 				.WithSecret(configuration["Jwt"])
 				.MustVerifySignature()
