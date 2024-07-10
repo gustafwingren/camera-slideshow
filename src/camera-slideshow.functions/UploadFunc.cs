@@ -29,7 +29,7 @@ public class UploadFunc
 		FunctionContext executionContext)
 	{
 		// Check if we have authentication info.
-		ValidateJWT auth = new ValidateJWT(_configuration, req);
+		ValidateJWT auth = new ValidateJWT(_logger, _configuration, req);
 
 		if (!auth.IsValid)
 		{

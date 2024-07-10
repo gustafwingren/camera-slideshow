@@ -2,6 +2,7 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace camera_slideshow.functions.Authentication;
 
@@ -10,11 +11,12 @@ public class ValidateJWT
 	public bool IsValid { get; }
 	public string Username { get; }
 	
-	public ValidateJWT(IConfiguration configuration, HttpRequestData request)
+	public ValidateJWT(ILogger logger, IConfiguration configuration, HttpRequestData request)
 	{
 		// Check if we have a header.
 		if (!request.Headers.Contains("Authorization"))
 		{
+			logger.LogError("No authorization header found.");
 			IsValid = false;
 
 			return;
@@ -25,6 +27,7 @@ public class ValidateJWT
 		// Check if the value is empty.
 		if (string.IsNullOrEmpty(authorizationHeader))
 		{
+			logger.LogError("Authorization header is empty.");
 			IsValid = false;
 
 			return;
@@ -49,6 +52,7 @@ public class ValidateJWT
 		}
 		catch (Exception exception)
 		{
+			logger.LogError(exception, "Failed to decode JWT token.");
 			IsValid = false;
 
 			return;
@@ -57,6 +61,7 @@ public class ValidateJWT
 		// Check if we have user claim.
 		if (!claims.ContainsKey("token"))
 		{
+			logger.LogError("No user claim found in JWT token.");
 			IsValid = false;
 
 			return;
