@@ -29,7 +29,7 @@ export class UploadComponent {
   }
 
   upload(): void {
-    this.apiClientService.upload('http://localhost:7071/api/upload', this.selectedImages[0])
+    this.apiClientService.upload('https://ashy-pond-08b195c03.5.azurestaticapps.net/api/upload', this.selectedImages[0])
       .subscribe(res => {
         this.input?.nativeElement.clear();
       });
