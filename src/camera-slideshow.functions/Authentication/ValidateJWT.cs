@@ -14,7 +14,7 @@ public class ValidateJWT
 	public ValidateJWT(ILogger logger, IConfiguration configuration, HttpRequestData request)
 	{
 		// Check if we have a header.
-		if (!request.Headers.Contains("Authorization"))
+		if (!request.Headers.Contains("Authorization2"))
 		{
 			logger.LogError("No authorization header found.");
 			IsValid = false;
@@ -22,7 +22,7 @@ public class ValidateJWT
 			return;
 		}
 
-		var authorizationHeader = request.Headers.GetValues("Authorization").FirstOrDefault();
+		var authorizationHeader = request.Headers.GetValues("Authorization2").FirstOrDefault();
 
 		// Check if the value is empty.
 		if (string.IsNullOrEmpty(authorizationHeader))

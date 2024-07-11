@@ -9,7 +9,7 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
     const token = localStorageService.get('token');
     if (token) {
       req = req.clone({
-        setHeaders: { Authorization: `Bearer ${token}` }
+        setHeaders: { Authorization2: `Bearer ${token}` }
       });
     }
 
