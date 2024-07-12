@@ -29,7 +29,7 @@ public class UploadFunc
 		FunctionContext executionContext)
 	{
 		// Check if we have authentication info.
-		ValidateJWT auth = new ValidateJWT(_logger, _configuration, req);
+		var auth = new ValidateJWT(_logger, _configuration, req);
 
 		if (!auth.IsValid)
 		{
@@ -40,7 +40,7 @@ public class UploadFunc
 		var file = parsedFormBody.Files[0];
 
 		var blobContainerClient = new BlobContainerClient(_configuration["AzureBlobStorage"], "wedding");
-		var blob = blobContainerClient.GetBlobClient(file.FileName);
+		var blob = blobContainerClient.GetBlobClient(Guid.NewGuid().ToString());
 		await blob.UploadAsync(file.Data);
 		
 		return req.CreateResponse(HttpStatusCode.OK);

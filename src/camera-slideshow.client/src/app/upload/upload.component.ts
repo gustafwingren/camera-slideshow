@@ -20,6 +20,7 @@ export class UploadComponent {
   selectedImages!: FileList;
   @ViewChild('#upload') input: ElementRef | undefined;
 
+  uploadSuccess = signal(false);
 
   onImageSelected(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
@@ -29,9 +30,11 @@ export class UploadComponent {
   }
 
   upload(): void {
+    this.uploadSuccess.set(false);
     this.apiClientService.upload('https://ashy-pond-08b195c03.5.azurestaticapps.net/api/upload', this.selectedImages[0])
       .subscribe(res => {
         this.input?.nativeElement.clear();
+        this.uploadSuccess.set(true);
       });
   }
 }
