@@ -1,4 +1,4 @@
-<input id="upload" type="file" accept="image/*,video/*" (change)="onImageSelected($event)"/>
+<input id="upload" type="file" accept="image/*,video/*,text/plain" (change)="onImageSelected($event)"/>
 <button (click)="upload()">Upload</button>
 
 @if (uploadSuccess()) {
