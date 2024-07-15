@@ -1,2 +1,17 @@
-<input type="text" (ngModelChange)="loginText.set($event)" [ngModel]="loginText()"/>
-<button type="submit" (click)="login()" class="rounded-xl pl-4 pr-4 bg-green-400 hover:bg-green-600">Login</button>
+<div class="space-y-6">
+  <div>
+    <label for="password" class="block text-lg text-brown-100 font-medium leading-6">Uppladdningskod</label>
+    <div class="mt-2">
+      <input
+        (ngModelChange)="loginText.set($event)"
+        [ngModel]="loginText()"
+        class="block w-full rounded-md border-0 py-1.5 px-1.5 text-xl text-brown-100 shadow-sm ring-1 ring-inset ring-green-300 placeholder:text-green-400 focus:ring-2 focus:outline-0 focus:ring-inset focus:ring-brown-200 sm:text-sm sm:leading-6" id="password"
+        name="password"
+        required
+        type="password"/>
+    </div>
+  </div>
+  <div>
+    <button type="submit" (click)="login()" class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-lg text-off-white font-semibold leading-6 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Logga in</button>
+  </div>
+</div>
