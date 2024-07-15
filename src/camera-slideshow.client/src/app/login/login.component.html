@@ -6,12 +6,27 @@
         (ngModelChange)="loginText.set($event)"
         [ngModel]="loginText()"
         class="block w-full rounded-md border-0 py-1.5 px-1.5 text-xl text-brown-100 shadow-sm ring-1 ring-inset ring-green-300 placeholder:text-green-400 focus:ring-2 focus:outline-0 focus:ring-inset focus:ring-brown-200 sm:text-sm sm:leading-6" id="password"
+        [ngClass]="[wrongCode() ? ' ring-2 ring-red': '']"
         name="password"
         required
         type="password"/>
+      @if (wrongCode()) {
+        <p class="text-red mt-2">Uppladdningskoden är inte giltig. Försök igen</p>
+      }
     </div>
   </div>
   <div>
-    <button type="submit" (click)="login()" class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-lg text-off-white font-semibold leading-6 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Logga in</button>
+    <button type="submit" (click)="login()" class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-lg text-off-white font-semibold leading-6 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+      @if(isLoggingIn()) {
+        <div class='flex space-x-2 justify-center items-center h-6'>
+          <span class='sr-only'>Loading...</span>
+          <div class='h-2 w-2 bg-off-white rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+          <div class='h-2 w-2 bg-off-white rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+          <div class='h-2 w-2 bg-off-white rounded-full animate-bounce'></div>
+        </div>
+      } @else {
+        Logga in
+      }
+    </button>
   </div>
 </div>

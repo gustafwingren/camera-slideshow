@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {map, Observable} from "rxjs";
+import {delay, map, Observable} from "rxjs";
 import {LocalStorageService} from "./local-storage-service.service";
 
 @Injectable({
@@ -12,8 +12,10 @@ export class AuthService {
   localStorageService = inject(LocalStorageService);
 
   login(secret: string): Observable<string> {
-    return this.http.post('https://ashy-pond-08b195c03.5.azurestaticapps.net/api/auth', {token: btoa(secret)})
-      .pipe(map((response: any) => {
+    return this.http.post('http://localhost:7071/api/auth', {token: btoa(secret)})
+      .pipe(
+        delay(2000),
+        map((response: any) => {
         return response.Token;
       }));
   }
