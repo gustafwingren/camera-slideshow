@@ -35,9 +35,10 @@ export class LoginComponent implements OnInit{
     if (this.loginText()) {
       this.isLoggingIn.set(true);
       this.wrongCode.set(false);
-      this.authService.login(this.loginText()).subscribe(
-        this.handleLoginComplete.bind(this),
-        this.handleLoginError.bind(this));
+      this.authService.login(this.loginText()).subscribe({
+        next: this.handleLoginComplete.bind(this),
+        error: this.handleLoginError.bind(this)
+      });
     }
   }
 

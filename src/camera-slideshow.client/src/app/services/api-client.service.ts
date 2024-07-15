@@ -13,12 +13,14 @@ export class ApiClientService {
     return this.httpClient.post<T>(url, body);
   }
 
-  upload(url: string, file: File): Observable<any> {
+  upload(url: string, files: File[]): Observable<any> {
     const headers = new HttpHeaders()
       .append('Content-Type', 'multipart/form-data');
 
     const formData: FormData = new FormData();
-    formData.append('image', file, file.name);
+    for (const file of files) {
+      formData.append('image', file, file.name);
+    }
 
     return this.httpClient.post(url, formData, {headers});
   }
