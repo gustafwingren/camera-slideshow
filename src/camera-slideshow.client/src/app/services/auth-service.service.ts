@@ -12,7 +12,7 @@ export class AuthService {
   localStorageService = inject(LocalStorageService);
 
   login(secret: string): Observable<string> {
-    return this.http.post('https://ashy-pond-08b195c03.5.azurestaticapps.net/api/auth', {token: btoa(secret)})
+    return this.http.post('https://roa.gwingren.se/api/auth', {token: btoa(secret)})
       .pipe(map((response: any) => {
         return response.Token;
       }));

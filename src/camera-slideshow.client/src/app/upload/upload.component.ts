@@ -1,9 +1,11 @@
-import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
+import {Component, computed, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import {ApiClientService} from "../services/api-client.service";
-import {map, Observable, Observer} from "rxjs";
+import {forkJoin, map, mergeMap, Observable, Observer} from "rxjs";
 import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {AsyncPipe, NgOptimizedImage} from "@angular/common";
+import {XCircleIconComponent} from "../x-circle-icon/x-circle-icon.component";
+import {toObservable} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-upload',
@@ -11,7 +13,8 @@ import {AsyncPipe, NgOptimizedImage} from "@angular/common";
   imports: [
     FormsModule,
     AsyncPipe,
-    NgOptimizedImage
+    NgOptimizedImage,
+    XCircleIconComponent
   ],
   templateUrl: './upload.component.html',
   styleUrl: './upload.component.scss'
@@ -25,48 +28,73 @@ export class UploadComponent {
 
   uploadFailure = signal(false);
   isUploading = signal(false);
+  uploadComplete = signal(false);
 
   onFileSelected(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement?.files && inputElement.files.length > 0) {
       const file = inputElement.files[0];
-      this.selectedFiles.update((files) => [...files, {file: file, id: Date.now()}]);
+      this.selectedFiles.update((files) => [...files, {file: file, id: Date.now(), status: UploadStatus.Unknown}]);
     }
   }
 
-  readAsDataUrl(file: File): Observable<string> {
-    return new Observable((observer: Observer<string>) => {
-      const reader = new FileReader();
-
-      reader.onloadend = () => observer.next(reader.result as string);
-      // reader.onerror = (error) => observer.error(error);
-
-      reader.readAsDataURL(file);
-    });
+  removeItem(id: number): void {
+    this.selectedFiles.update((files) => files.filter(f => f.id !== id));
   }
+
+  previewFiles = computed(() => {
+    return this.selectedFiles().map(item => {
+      const fileReader = new FileReader();
+      const image = new Observable<string>((observer: Observer<string>) => {
+        fileReader.onloadend = () => {
+          observer.next(fileReader.result as string);
+          observer.complete();
+        };
+      });
+      fileReader.readAsDataURL(item.file);
+      return {id: item.id, imageSrc: image, status: item.status};
+    });
+  })
 
   upload(): void {
     this.uploadFailure.set(false);
     this.isUploading.set(true);
-    this.apiClientService.upload('https://ashy-pond-08b195c03.5.azurestaticapps.net/api/upload', this.selectedFiles().map(f => f.file))
-      .subscribe({
-        next: this.handleUploadSuccess.bind(this),
-        error: this.handleUploadFailure.bind(this)
-      });
+    this.uploadComplete.set(false);
+
+    const tasks = this.selectedFiles().map(fileItem => {
+      return {id: fileItem.id, task: this.apiClientService.upload('https://roa.gwingren.se/api/upload', fileItem)};
+    });
+
+    forkJoin(tasks.map(task => task.task)).subscribe({ next: () => {
+      this.isUploading.set(false);
+      this.selectedFiles.set([]);
+      this.uploadComplete.set(true);
+    }});
+
+    tasks.forEach(task => {
+      task.task.subscribe({
+        next: value => {
+          this.selectedFiles.update(files => files.map(file => file.id === task.id ? {...file, status: UploadStatus.Success} : file))
+        },
+        error: () => {
+          this.selectedFiles.update(files => files.map(file => file.id === task.id ? {...file, status: UploadStatus.Failure} : file));
+        }
+      })
+    })
   }
 
-  handleUploadSuccess(): void {
-    this.input?.nativeElement.clear();
-    this.isUploading.set(false);
-  }
-
-  handleUploadFailure(): void {
-    this.uploadFailure.set(true);
-    this.isUploading.set(false);
-  }
+  protected readonly UploadStatus = UploadStatus;
 }
 
 export interface FileItem {
   file: File;
   id: number;
+  status: UploadStatus;
+}
+
+export enum UploadStatus {
+  Unknown = 0,
+  InProgress = 1,
+  Success = 2,
+  Failure = 3
 }

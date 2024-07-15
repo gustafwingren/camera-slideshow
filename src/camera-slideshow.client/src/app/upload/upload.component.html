@@ -1,12 +1,15 @@
 <div class="space-y-6">
-  <div class>
-    @for (item of selectedFiles(); track item) {
-      <div class="relative h-8 w-8">
-
-        <img alt="preview"/>
+  <div class="grid grid-cols-3 gap-4 content-evenly">
+    @for (item of previewFiles(); track item) {
+      <div class="relative aspect-square">
+        <img [src]="item.imageSrc | async" class="object-cover aspect-square" />
+        <button class="absolute -top-3 -right-3 h-6 w-6 text-red bg-off-white rounded-xl" (click)="removeItem(item.id)"><app-x-circle-icon class="h-6 w-6"/></button>
       </div>
     }
   </div>
+  @if (uploadComplete()) {
+    <p class="text-brown-100 text-lg">Uppladdning klar. Var vänlig och ladda upp mer om du vill.</p>
+  }
   <div>
     <div class="col-span-full">
       <div class="mt-2 flex justify-center rounded-lg border border-dashed border-green-300 px-6 py-10">
@@ -17,10 +20,9 @@
           <div class="mt-4 flex flex-col content-center text-lg leading-6 text-brown-100">
             <label for="file-upload" class="relative cursor-pointer rounded-md bg-off-white font-bold text-brown-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-green-300 focus-within:ring-offset-2 hover:text-brown-200">
               <span>Ladda upp en fil</span>
-              <input id="file-upload" name="file-upload" type="file" accept="image/*,video/*" class="sr-only" (change)="onFileSelected($event)">
+              <input [disabled]="isUploading()" id="file-upload" name="file-upload" type="file" accept="image/*,video/*" class="sr-only" (change)="onFileSelected($event)">
             </label>
           </div>
-          <p class="mt-4 flex text-lg leading-6 text-brown-100">eller dra och släpp</p>
         </div>
       </div>
     </div>
