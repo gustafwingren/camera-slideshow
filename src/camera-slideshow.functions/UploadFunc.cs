@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using camera_slideshow.functions.Authentication;
 using HttpMultipartParser;
 using Microsoft.AspNetCore.Http;
@@ -42,6 +43,7 @@ public class UploadFunc
 		var blobContainerClient = new BlobContainerClient(_configuration["AzureBlobStorage"], "wedding");
 		var blob = blobContainerClient.GetBlobClient(Guid.NewGuid().ToString());
 		await blob.UploadAsync(file.Data);
+		await blob.SetHttpHeadersAsync(new BlobHttpHeaders() { ContentType = file.ContentType });
 		
 		return req.CreateResponse(HttpStatusCode.OK);
 	}
