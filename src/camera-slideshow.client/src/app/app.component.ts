@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, inject} from '@angular/core';
+import {Router, RouterOutlet} from '@angular/router';
 import { NgSwitch, NgSwitchDefault, NgSwitchCase } from '@angular/common';
 
 @Component({
@@ -10,5 +10,6 @@ import { NgSwitch, NgSwitchDefault, NgSwitchCase } from '@angular/common';
     imports: [NgSwitch, NgSwitchDefault, NgSwitchCase, RouterOutlet]
 })
 export class AppComponent {
+  router = inject(Router);
   title = 'camera-slidshow.client';
 }

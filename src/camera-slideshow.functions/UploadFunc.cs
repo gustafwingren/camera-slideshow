@@ -39,7 +39,7 @@ public class UploadFunc
 
 		var parsedFormBody =  await MultipartFormDataParser.ParseAsync(req.Body);
 		var file = parsedFormBody.Files[0];
-
+		
 		var blobContainerClient = new BlobContainerClient(_configuration["AzureBlobStorage"], "wedding");
 		var blob = blobContainerClient.GetBlobClient(Guid.NewGuid().ToString());
 		await blob.UploadAsync(file.Data);

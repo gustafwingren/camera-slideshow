@@ -1,11 +1,10 @@
 import {Component, computed, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import {ApiClientService} from "../services/api-client.service";
-import {forkJoin, map, mergeMap, Observable, Observer} from "rxjs";
-import {Router} from "@angular/router";
+import {catchError, forkJoin, map, merge, mergeMap, Observable, Observer, of, tap, throwError} from "rxjs";
 import {FormsModule} from "@angular/forms";
 import {AsyncPipe, NgOptimizedImage} from "@angular/common";
 import {XCircleIconComponent} from "../x-circle-icon/x-circle-icon.component";
-import {toObservable} from "@angular/core/rxjs-interop";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Component({
   selector: 'app-upload',
@@ -62,28 +61,34 @@ export class UploadComponent {
     this.uploadComplete.set(false);
 
     const tasks = this.selectedFiles().map(fileItem => {
-      return {id: fileItem.id, task: this.apiClientService.upload('https://roa.gwingren.se/api/upload', fileItem)};
+      return {id: fileItem.id, task: this.apiClientService.upload('https://roa.gwingren.se/api/upload', fileItem).pipe(
+        catchError((error) => {
+          this.selectedFiles.update(files => files.map(file => file.id === fileItem.id ? {...file, status: UploadStatus.Failure} : file));
+          return of({Success: false});
+        }),
+          tap({
+            next: (result) => {
+              if (result?.Success === false) {
+                return;
+              }
+
+              this.selectedFiles.update(files => [...files.filter(file => file.id !== fileItem.id) ]);
+            }}),
+        )};
     });
 
-    forkJoin(tasks.map(task => task.task)).subscribe({ next: () => {
-      this.isUploading.set(false);
-      this.selectedFiles.set([]);
-      this.uploadComplete.set(true);
+    forkJoin(tasks.map(task => task.task)).subscribe({ next: (result) => {
+      console.log(result);
+      if (result.every(r => r === null)) {
+        this.isUploading.set(false);
+        this.selectedFiles.set([]);
+        this.uploadComplete.set(true);
+      } else {
+        this.isUploading.set(false);
+        this.uploadFailure.set(true);
+      }
     }});
-
-    tasks.forEach(task => {
-      task.task.subscribe({
-        next: value => {
-          this.selectedFiles.update(files => files.map(file => file.id === task.id ? {...file, status: UploadStatus.Success} : file))
-        },
-        error: () => {
-          this.selectedFiles.update(files => files.map(file => file.id === task.id ? {...file, status: UploadStatus.Failure} : file));
-        }
-      })
-    })
   }
-
-  protected readonly UploadStatus = UploadStatus;
 }
 
 export interface FileItem {

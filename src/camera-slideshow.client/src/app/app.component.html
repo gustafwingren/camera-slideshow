@@ -1,10 +1,14 @@
-<div class="container mx-auto text-center">
-  <h1 class="font-sans text-brown-100 text-7xl flex flex-col w-80 p-8 mx-auto">
-    <div class="self-start">Rebecka</div>
-    <div class="self-center -mt-4">&</div>
-    <div class="self-end -mt-4">Andreas</div></h1>
-  <h2 class="font-serif uppercase text-brown-100 text-2xl tracking-widest">10 Augusti 2024</h2>
-  <div class="mt-10 mr-4 ml-4 sm:mx-auto sm:w-full sm:max-w-sm text-left">
-    <router-outlet/>
+@if (!router.isActive('slideshow', {paths: 'exact', queryParams: 'exact', fragment: 'ignored',matrixParams: 'ignored'})) {
+  <div class="container mx-auto text-center">
+    <h1 class="font-sans text-brown-100 text-7xl flex flex-col w-80 p-8 mx-auto">
+      <div class="self-start">Rebecka</div>
+      <div class="self-center -mt-4">&</div>
+      <div class="self-end -mt-4">Andreas</div></h1>
+    <h2 class="font-serif uppercase text-brown-100 text-2xl tracking-widest">10 Augusti 2024</h2>
+    <div class="mt-10 mr-4 ml-4 sm:mx-auto sm:w-full sm:max-w-sm text-left">
+      <router-outlet/>
+    </div>
   </div>
-</div>
+} @else {
+  <router-outlet/>
+}
