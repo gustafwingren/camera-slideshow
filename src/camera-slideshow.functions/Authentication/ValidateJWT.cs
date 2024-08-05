@@ -43,7 +43,6 @@ public class ValidateJWT
 				authorizationHeader = authorizationHeader.Substring(7);
 			}
 
-			logger.LogError(new Exception(authorizationHeader), authorizationHeader);
 			// Validate the token and decode the claims.
 			claims = JwtBuilder.Create()
 				.WithAlgorithm(new HMACSHA256Algorithm())
