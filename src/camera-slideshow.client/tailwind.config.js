@@ -34,17 +34,7 @@ module.exports = {
       sans: ['Playlist', 'sans-serif'],
       serif: ['Montserrat', 'serif'],
     },
-    extend: {
-      backgroundImage: {
-        'sunflower': "url('/assets/images/top_left.png'),url('/assets/images/top_right.png'),url('/assets/images/bottom_right.png'),url('/assets/images/bottom_left.png')",
-      },
-      backgroundSize: {
-        'size-sunflower': "20%, 20%, 20%, 20%",
-      },
-      backgroundPosition: {
-        'position-sunflower': "left -15px top -60px, right -15px top -60px, right -70px bottom -10px, left -70px bottom -10px",
-      },
-    },
+    extend: {},
   },
   plugins: [],
 }
